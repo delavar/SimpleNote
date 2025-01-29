@@ -1,0 +1,73 @@
+# Django stuff:
+*.log
+*.pot
+*.pyc
+staticfiles/
+*.sqlite3
+
+# Ignore database files
+db.sqlite3
+
+# Ignore local environment variables
+local.env
+
+# macOS metadata files
+.DS_Store
+
+# Django migrations
+*.py[cod]
+
+# Gunicorn pid file
+gunicorn.pid
+
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mypy
+.mypy_cache/
+
+# Pyre type checker
+.pyre/
+
+# profiling
+profiling/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# Celery
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.idea/
+
+# VSCode
+.vscode/
