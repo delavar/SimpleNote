@@ -16,6 +16,9 @@ class ListCreateNoteAPIView(ListCreateAPIView):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = NoteFilter
 
+    def get_queryset(self):
+        return self.queryset.filter(creator=self.request.user)
+
     def perform_create(self, serializer):
         # Assign the user who created the note
         serializer.save(creator=self.request.user)
