@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class NoteSerializer(serializers.ModelSerializer):  # create class to serializer model
-    creator = serializers.ReadOnlyField(source='creator.username')
+    creator = serializers.ReadOnlyField(source='creator.first_name')
 
     class Meta:
         model = Note
