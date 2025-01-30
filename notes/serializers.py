@@ -8,7 +8,8 @@ class NoteSerializer(serializers.ModelSerializer):  # create class to serializer
 
     class Meta:
         model = Note
-        fields = ('id', 'title', 'description', 'creator')
+        fields = ('id', 'title', 'description', 'creator' , 'created_at', 'updated_at')
+        read_only_fields = ['created_at', 'updated_at']
 
 
 class UserSerializer(serializers.ModelSerializer):  # create class to serializer user model

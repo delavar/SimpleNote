@@ -13,8 +13,6 @@ class ListCreateNoteAPIView(ListCreateAPIView):
     queryset = Note.objects.all()
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
-    filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = NoteFilter
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
@@ -28,3 +26,19 @@ class RetrieveUpdateDestroyNoteAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = NoteSerializer
     queryset = Note.objects.all()
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+
+class FilterNotesAPIView(ListCreateAPIView):
+    serializer_class = NoteSerializer
+    queryset = Note.objects.all()
+    permission_classes = [IsAuthenticated]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = NoteFilter
+
+    def get_queryset(self):
+        return self.queryset.filter(creator=self.request.user)
+
+    def perform_create(self, serializer):
+        # Assign the user who created the note
+        serializer.save(creator=self.request.user)
+
