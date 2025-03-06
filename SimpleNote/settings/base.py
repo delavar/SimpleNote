@@ -18,6 +18,9 @@ INSTALLED_APPS = [
     'notes',
     'django_filters',
     'authentication',
+
+    # THIS SHOULD BE AT THE END
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -98,6 +101,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    "DEFAULT_SCHEMA_CLASS": "drf_standardized_errors.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+
 }
 
 SIMPLE_JWT = {
@@ -105,4 +111,10 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SimpleNote',
+    'DESCRIPTION': 'Simple Note Project APIs',
+    'VERSION': '0.1.0',
 }

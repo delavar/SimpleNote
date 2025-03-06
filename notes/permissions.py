@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied
 
+from .models import Note
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
@@ -13,5 +14,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # Write permissions are only allowed to the creator of the note
+        if not isinstance(obj, Note):
+            return False
+
         return obj.creator == request.user

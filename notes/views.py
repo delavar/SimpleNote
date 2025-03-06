@@ -1,49 +1,58 @@
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, CreateAPIView
-from rest_framework.permissions import IsAuthenticated
-from django_filters import rest_framework as filters
-from rest_framework.response import Response
-
-from .models import Note
-from .permissions import IsOwnerOrReadOnly
-from .serializers import NoteSerializer
-from .pagination import CustomPagination
 from .filters import NoteFilter
+from .pagination import CustomPagination
+from .serializers import NoteSerializer
+from .permissions import IsOwnerOrReadOnly
+from .models import Note
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+from django_filters import rest_framework as filters
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.generics import (
+    RetrieveUpdateDestroyAPIView,
+    ListCreateAPIView, ListAPIView,
+    CreateAPIView)
 
 
 class ListCreateNoteAPIView(ListCreateAPIView):
+    """API view for listing and creating a single note"""
     serializer_class = NoteSerializer
     queryset = Note.objects.all()
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
-    def create(self, request, *args, **kwargs):
-        # Override create to support batch creation
-        if isinstance(request.data, list):
-            # When request data is a list, handle batch creation
-            serializer = self.get_serializer(data=request.data, many=True)
-            if serializer.is_valid():
-                serializer.save(creator=self.request.user)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                # Detail validation error for each item
-                errors = []
-                for index, error in enumerate(serializer.errors):
-                    if error:
-                        error['index'] = index
-                        errors.append(error)
-                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            # Default single instance creation
-            return super().create(request, *args, **kwargs)
-
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
 
     def perform_create(self, serializer):
-        # Assign the user who created the note
         serializer.save(creator=self.request.user)
+
+
+class BulkCreateNoteAPIView(CreateAPIView):
+    """API view for batch creation of multiple notes at once"""
+    serializer_class = NoteSerializer
+    queryset = Note.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer(self, *args, **kwargs):
+        """
+        Return the serializer instance that should be used for validating and
+        deserializing input, and for serializing output.
+        """
+        kwargs['many'] = True
+        return super().get_serializer(*args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        if not isinstance(request.data, list):
+            raise ValidationError(
+                "invalid data format. expected a list of items.")
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(creator=request.user)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class RetrieveUpdateDestroyNoteAPIView(RetrieveUpdateDestroyAPIView):
@@ -52,16 +61,13 @@ class RetrieveUpdateDestroyNoteAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
 
-class FilterNotesAPIView(ListCreateAPIView):
+class FilterNotesAPIView(ListAPIView):
     serializer_class = NoteSerializer
     queryset = Note.objects.all()
     permission_classes = [IsAuthenticated]
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = NoteFilter
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
-
-    def perform_create(self, serializer):
-        # Assign the user who created the note
-        serializer.save(creator=self.request.user)
