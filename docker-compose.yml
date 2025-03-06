@@ -1,10 +1,9 @@
-version: '3.8'
-
+version: "3.8"
 services:
   web:
     container_name: simple_note
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c 'python manage.py migrate && python manage.py runserver 0.0.0.0:8000'
     ports:
       - "8000:8000"
     volumes:
@@ -13,19 +12,25 @@ services:
       - db
     env_file:
       - local.env
-
+    environment:
+      POSTGRES_HOST: "db"
+    networks:
+      - simplenote_network
   db:
-    image: postgres:13
+    image: postgres:16
     container_name: postgres_db
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - local.env
+    networks:
+      - simplenote_network
+networks:
+  simplenote_network:
+    driver: bridge
 volumes:
   postgres_data:

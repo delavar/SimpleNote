@@ -10,6 +10,7 @@ db.sqlite3
 
 # Ignore local environment variables
 local.env
+local.env.sample
 
 # macOS metadata files
 .DS_Store
