@@ -6,9 +6,6 @@ from inflection import camelize
 from rest_framework import serializers
 from typing import Type, Dict, Any, Optional, Set, List
 
-
-
-
 class CustomAutoSchema(AutoSchema):
     def _get_http400_serializer(self):
         operation_id = self.get_operation_id()
@@ -36,31 +33,6 @@ class CustomAutoSchema(AutoSchema):
             resource_type_field_name="type",
         )
 
-
-# def get_error_serializer(
-#     operation_id: str, attr: Optional[str]]
-# ) -> Type[serializers.Serializer]:
-#     attr_kwargs: Dict[str, Any] = {"choices": [(attr, attr)]}
-#     if not attr:
-#         attr_kwargs["allow_null"] = True
-#
-#     camelcase_operation_id = camelize(operation_id)
-#     attr_with_underscores = (attr or "").replace(
-#         package_settings.NESTED_FIELD_SEPARATOR, "_"
-#     )
-#     camelcase_attr = camelize(attr_with_underscores)
-#     suffix = package_settings.ERROR_COMPONENT_NAME_SUFFIX
-#     component_name = f"{camelcase_operation_id}{camelcase_attr}{suffix}"
-#
-#     class ErrorSerializer(serializers.Serializer):
-#         attr = serializers.ChoiceField(**attr_kwargs)
-#         code = serializers.CharField()
-#         detail = serializers.CharField()
-#
-#         class Meta:
-#             ref_name = component_name
-#
-#     return ErrorSerializer
 
 def get_validation_error_serializer(
     operation_id: str, error_codes_by_field: Dict[str, Set[str]]
