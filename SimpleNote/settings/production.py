@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = os.getenv("DEBUG", 'false').lower() in ('true', '1', 'yes', 'y', 't')
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
 
