@@ -33,6 +33,7 @@ class BulkCreateNoteAPIView(CreateAPIView):
     serializer_class = NoteSerializer
     queryset = Note.objects.all()
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def get_serializer(self, *args, **kwargs):
         """

@@ -132,3 +132,9 @@ SPECTACULAR_SETTINGS = {
         "ErrorCode500Enum": "drf_standardized_errors.openapi_serializers.ErrorCode500Enum.choices",
     },
 }
+
+DRF_STANDARDIZED_ERRORS = {
+    "ERROR_SCHEMAS": {
+        "401": "core.errors.ErrorResponse401Serializer",
+    }
+}

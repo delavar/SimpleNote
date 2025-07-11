@@ -3,8 +3,9 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from drf_spectacular.utils import  extend_schema
 
-from .serializers import RegisterSerializer, UserInfoSerializer, ChangePasswordSerializer
+from .serializers import RegisterSerializer, UserInfoSerializer, ChangePasswordSerializer, MessageSerializer 
 
 
 class RegisterView(generics.CreateAPIView):
@@ -23,7 +24,15 @@ class UserInfoView(APIView):
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
 
+    @extend_schema(
+        summary="Change User Password",
+        description="Allows an authenticated user to change their own password.",
+        request=ChangePasswordSerializer,
+        responses={
+            200: MessageSerializer,
+        })
     def post(self, request, *args, **kwargs):
         serializer = ChangePasswordSerializer(
             data=request.data, context={'request': request}

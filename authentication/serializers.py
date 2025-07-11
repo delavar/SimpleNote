@@ -26,15 +26,17 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
+
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True)
+    old_password = serializers.CharField(required=True, write_only=True)
     new_password = serializers.CharField(
-        required=True, validators=[validate_password]
+        required=True, validators=[validate_password], write_only=True,
     )
 
     def validate_old_password(self, value):
@@ -42,3 +44,5 @@ class ChangePasswordSerializer(serializers.Serializer):
         if not user.check_password(value):
             raise serializers.ValidationError('Old password is not correct.')
         return value
+class MessageSerializer(serializers.Serializer):
+    detail = serializers.CharField()

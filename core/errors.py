@@ -63,3 +63,13 @@ def get_validation_error_serializer(
 
     return ValidationErrorSerializer
 
+
+class Error401Serializer(serializers.Serializer):
+    code = serializers.CharField()
+    detail = serializers.CharField()
+    attr = serializers.CharField(allow_null=True)
+
+
+class ErrorResponse401Serializer(serializers.Serializer):
+    type = serializers.ChoiceField(choices=ClientErrorEnum.choices)
+    errors = Error401Serializer(many=True)
